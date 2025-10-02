@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+<style>
+    .card.game-card {
+        background: 
+            linear-gradient(145deg, rgba(139, 69, 19, 0.4), rgba(74, 85, 104, 0.3)),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><circle cx="10" cy="10" r="2" fill="rgba(212,175,55,0.1)"/><circle cx="40" cy="30" r="1.5" fill="rgba(212,175,55,0.1)"/><circle cx="25" cy="45" r="1" fill="rgba(212,175,55,0.1)"/></svg>');
+        border: 2px solid var(--copper);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .card.game-card::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            var(--secondary-color) 50%, 
+            transparent);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .card.game-card:hover::before {
+        opacity: 1;
+    }
+    
+    .form-label {
+        font-family: 'Cinzel', serif;
+        color: var(--secondary-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+    
+    .btn-outline-light {
+        border: 2px solid var(--parchment);
+        color: var(--parchment);
+        font-family: 'Cinzel', serif;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-light:hover {
+        background: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: var(--dark-bg);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+    }
+    
+    .badge.bg-secondary {
+        background: linear-gradient(135deg, var(--iron), #2d3748) !important;
+        border: 1px solid var(--copper);
+        font-family: 'Cinzel', serif;
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    .pagination .page-link {
+        background: rgba(139, 69, 19, 0.3);
+        border: 2px solid var(--copper);
+        color: var(--parchment);
+        font-family: 'Cinzel', serif;
+        margin: 0 5px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .pagination .page-link:hover {
+        background: var(--copper);
+        border-color: var(--secondary-color);
+        color: var(--dark-bg);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, var(--copper), var(--secondary-color));
+        border-color: var(--secondary-color);
+        color: var(--dark-bg);
+        font-weight: 700;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    }
+    
+    .text-center h1 {
+        font-family: 'Cinzel Decorative', serif;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .text-center h1::before,
+    .text-center h1::after {
+        content: '⚔';
+        position: absolute;
+        color: var(--copper);
+        font-size: 1.5rem;
+        animation: weaponFloat 3s ease-in-out infinite;
+    }
+    
+    .text-center h1::before {
+        left: -40px;
+    }
+    
+    .text-center h1::after {
+        right: -40px;
+        animation-delay: 1.5s;
+    }
+    
+    @keyframes weaponFloat {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-5px) rotate(5deg);
+        }
+    }
+    
+    .card-footer {
+        border-top: 2px solid var(--copper);
+        background: rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    h3 {
+        font-family: 'Cinzel', serif;
+        color: var(--secondary-color);
+        border-bottom: 2px solid var(--copper);
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+    </style>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.game-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0) rotate(0deg)';
+                    }, index * 100);
+                }
+            });
+        });
+        
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px) rotate(-2deg)';
+            card.style.transition = 'all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)';
+            observer.observe(card);
+        });
+    });
+    </script>
+{% block title %}Tous les jeux - GameForge{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5">
+                <i class="fas fa-gamepad me-3"></i>Découvrir les jeux
+            </h1>
+            <p class="lead text-muted">
+                Explorez les créations uniques de notre communauté
+            </p>
+        </div>
+    </div>
+
+    <!-- Formulaire de recherche -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-search me-2"></i>Rechercher et filtrer
+                    </h5>
+                    <form method="get">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ search_form.query.id_for_label }}" class="form-label">
+                                    <i class="fas fa-search me-2"></i>Recherche
+                                </label>
+                                {{ search_form.query }}
+                            </div>
+                            <div class="col-md-2">
+                                <label for="{{ search_form.search_in.id_for_label }}" class="form-label">Rechercher dans</label>
+                                {{ search_form.search_in }}
+                            </div>
+                            <div class="col-md-2">
+                                <label for="{{ search_form.genre.id_for_label }}" class="form-label">Genre</label>
+                                {{ search_form.genre }}
+                            </div>
+                            <div class="col-md-2">
+                                <label for="{{ search_form.ambiance.id_for_label }}" class="form-label">Ambiance</label>
+                                {{ search_form.ambiance }}
+                            </div>
+                            <div class="col-md-2">
+                                <label for="{{ search_form.order_by.id_for_label }}" class="form-label">Trier par</label>
+                                {{ search_form.order_by }}
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Résultats -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3>
+                    {% if games %}
+                        {{ page_obj.paginator.count }} jeu{{ page_obj.paginator.count|pluralize }} trouvé{{ page_obj.paginator.count|pluralize }}
+                    {% else %}
+                        Aucun jeu trouvé
+                    {% endif %}
+                </h3>
+                {% if user.is_authenticated %}
+                <a href="{% url 'create_game' %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-2"></i>Créer un jeu
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des jeux -->
+    {% if games %}
+    <div class="row g-4">
+        {% for game in games %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card game-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title">{{ game.title }}</h5>
+                        {% if user.is_authenticated %}
+                        <button class="btn btn-sm btn-outline-light favorite-btn" 
+                                data-game-id="{{ game.id }}"
+                                title="Ajouter aux favoris">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="badge badge-genre me-2">{{ game.get_genre_display }}</span>
+                        <span class="badge badge-ambiance">{{ game.get_ambiance_display }}</span>
+                    </div>
+
+                    <p class="card-text">{{ game.description|truncatewords:20 }}</p>
+
+                    {% if game.get_keywords_list %}
+                    <div class="mb-3">
+                        {% for keyword in game.get_keywords_list|slice:":3" %}
+                        <span class="badge bg-secondary me-1">{{ keyword }}</span>
+                        {% endfor %}
+                        {% if game.get_keywords_list|length > 3 %}
+                        <span class="badge bg-secondary">+{{ game.get_keywords_list|length|add:"-3" }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-user me-1"></i>{{ game.creator.username }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>{{ game.views_count }}
+                        </small>
+                    </div>
+
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>{{ game.created_at|date:"d/m/Y" }}
+                        </small>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'game_detail' game.pk %}" class="btn btn-primary w-100">
+                        <i class="fas fa-eye me-2"></i>Découvrir
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Navigation des pages">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.ambiance %}&ambiance={{ request.GET.ambiance }}{% endif %}{% if request.GET.order_by %}&order_by={{ request.GET.order_by }}{% endif %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.ambiance %}&ambiance={{ request.GET.ambiance }}{% endif %}{% if request.GET.order_by %}&order_by={{ request.GET.order_by }}{% endif %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.ambiance %}&ambiance={{ request.GET.ambiance }}{% endif %}{% if request.GET.order_by %}&order_by={{ request.GET.order_by }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.ambiance %}&ambiance={{ request.GET.ambiance }}{% endif %}{% if request.GET.order_by %}&order_by={{ request.GET.order_by }}{% endif %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.ambiance %}&ambiance={{ request.GET.ambiance }}{% endif %}{% if request.GET.order_by %}&order_by={{ request.GET.order_by }}{% endif %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Aucun résultat -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Aucun jeu trouvé</h4>
+                    <p class="text-muted mb-4">
+                        Essayez de modifier vos critères de recherche ou explorez d'autres genres.
+                    </p>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'create_game' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Créer le premier jeu de ce type !
+                    </a>
+                    {% else %}
+                    <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Rejoindre la communauté
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'apparition des cartes
+    const cards = document.querySelectorAll('.game-card');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
+    });
+    
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}

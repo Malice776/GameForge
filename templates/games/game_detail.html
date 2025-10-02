@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ game.title }} - GameForge{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <!-- En-tête du jeu -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="display-5">{{ game.title }}</h1>
+                    <div class="mb-3">
+                        <span class="badge badge-genre me-2">{{ game.get_genre_display }}</span>
+                        <span class="badge badge-ambiance me-2">{{ game.get_ambiance_display }}</span>
+                        {% if not game.is_public %}
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-lock me-1"></i>Privé
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted">
+                        <i class="fas fa-user me-1"></i>Créé par <strong>{{ game.creator.username }}</strong>
+                        le {{ game.created_at|date:"d F Y" }}
+                    </p>
+                </div>
+                <div class="text-end">
+                    {% if user.is_authenticated %}
+                        {% if user == game.creator %}
+                        <div class="btn-group mb-2" role="group">
+                            <a href="{% url 'edit_game' game.pk %}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit me-1"></i>Modifier
+                            </a>
+                            <a href="{% url 'delete_game' game.pk %}" class="btn btn-outline-danger">
+                                <i class="fas fa-trash me-1"></i>Supprimer
+                            </a>
+                        </div>
+                        {% endif %}
+                        <br>
+                        <button class="btn btn-outline-light favorite-btn" 
+                                data-game-id="{{ game.id }}"
+                                title="{% if is_favorited %}Retirer des favoris{% else %}Ajouter aux favoris{% endif %}">
+                            <i class="{% if is_favorited %}fas fa-heart text-danger{% else %}far fa-heart{% endif %}"></i>
+                            Favori
+                        </button>
+                    {% endif %}
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>{{ game.views_count }} vue{{ game.views_count|pluralize }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle me-2"></i>Description
+                    </h3>
+                    <p class="card-text">{{ game.description }}</p>
+                    
+                    {% if game.keywords %}
+                    <div class="mt-3">
+                        <h6>Mots-clés :</h6>
+                        {% for keyword in game.get_keywords_list %}
+                        <span class="badge bg-secondary me-1">{{ keyword }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if game.cultural_references %}
+                    <div class="mt-3">
+                        <h6>Références culturelles :</h6>
+                        <p class="text-muted">{{ game.cultural_references }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu généré -->
+    <div class="row">
+        <!-- Univers -->
+        {% if game.universe_description %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-globe me-2 text-primary"></i>Univers
+                    </h4>
+                    <p class="card-text">{{ game.universe_description|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Histoire -->
+        {% if game.main_story %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-book-open me-2 text-success"></i>Histoire principale
+                    </h4>
+                    <div class="card-text">{{ game.main_story|linebreaks }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Gameplay -->
+        {% if game.gameplay_mechanics %}
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-gamepad me-2 text-warning"></i>Mécaniques de jeu
+                    </h4>
+                    <p class="card-text">{{ game.gameplay_mechanics|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Personnages -->
+    {% if game.characters.exists %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-users me-2"></i>Personnages
+            </h3>
+            <div class="row g-3">
+                {% for character in game.characters.all %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ character.name }}
+                                <span class="badge bg-info ms-2">{{ character.get_role_display }}</span>
+                            </h5>
+                            <h6 class="text-muted">{{ character.character_class }}</h6>
+                            <p class="card-text small">{{ character.background|truncatewords:20 }}</p>
+                            
+                            <button class="btn btn-sm btn-outline-primary" type="button" 
+                                    data-bs-toggle="collapse" 
+                                    data-bs-target="#character{{ character.id }}" 
+                                    aria-expanded="false">
+                                <i class="fas fa-info-circle me-1"></i>Détails
+                            </button>
+                            
+                            <div class="collapse mt-3" id="character{{ character.id }}">
+                                <div class="card card-body bg-dark bg-opacity-25">
+                                    <h6>Capacités :</h6>
+                                    <p class="small">{{ character.abilities }}</p>
+                                    <h6>Motivations :</h6>
+                                    <p class="small">{{ character.motivations }}</p>
+                                    <h6>Apparence :</h6>
+                                    <p class="small">{{ character.appearance }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Lieux -->
+    {% if game.locations.exists %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-map-marker-alt me-2"></i>Lieux emblématiques
+            </h3>
+            <div class="row g-3">
+                {% for location in game.locations.all %}
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ location.name }}</h5>
+                            <p class="card-text">{{ location.description }}</p>
+                            
+                            <button class="btn btn-sm btn-outline-primary" type="button" 
+                                    data-bs-toggle="collapse" 
+                                    data-bs-target="#location{{ location.id }}" 
+                                    aria-expanded="false">
+                                <i class="fas fa-info-circle me-1"></i>Plus d'infos
+                            </button>
+                            
+                            <div class="collapse mt-3" id="location{{ location.id }}">
+                                <div class="card card-body bg-dark bg-opacity-25">
+                                    <h6>Atmosphère :</h6>
+                                    <p class="small">{{ location.atmosphere }}</p>
+                                    <h6>Importance gameplay :</h6>
+                                    <p class="small">{{ location.gameplay_significance }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Images conceptuelles -->
+    <div class="row mb-4">
+        {% if game.concept_art_character %}
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-user me-2"></i>Art conceptuel - Personnage
+                    </h5>
+                    <img src="{{ game.concept_art_character.url }}" 
+                         class="img-fluid rounded" 
+                         alt="Art conceptuel personnage">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if game.concept_art_environment %}
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-mountain me-2"></i>Art conceptuel - Environnement
+                    </h5>
+                    <img src="{{ game.concept_art_environment.url }}" 
+                         class="img-fluid rounded" 
+                         alt="Art conceptuel environnement">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Navigation -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'game_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                </a>
+                {% if user.is_authenticated and user == game.creator %}
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-tachometer-alt me-2"></i>Mon Dashboard
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,542 @@
+{% extends 'base.html' %}
+
+{% block title %}Créer un jeu - GameForge{% endblock %}
+<style> 
+        @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -100% 0;
+        }
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    @keyframes runeGlow {
+        0%, 100% {
+            text-shadow: 
+                0 0 5px var(--secondary-color),
+                0 0 10px var(--secondary-color);
+        }
+        50% {
+            text-shadow: 
+                0 0 10px var(--secondary-color),
+                0 0 20px var(--secondary-color),
+                0 0 30px var(--accent-color);
+        }
+    }
+
+    .animate__animated {
+        animation-duration: 0.6s;
+        animation-fill-mode: both;
+    }
+
+    .animate__fadeInUp {
+        animation-name: fadeInUp;
+    }
+
+    .container h1 {
+        font-family: 'Cinzel Decorative', serif;
+        color: var(--secondary-color);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .container h1::before,
+    .container h1::after {
+        content: '⚔';
+        position: absolute;
+        color: var(--copper);
+        font-size: 1.5rem;
+        animation: runeGlow 2s infinite;
+    }
+
+    .container h1::before {
+        left: -40px;
+    }
+
+    .container h1::after {
+        right: -40px;
+    }
+
+    .lead {
+        font-family: 'Cinzel', serif;
+        font-style: italic;
+        color: var(--parchment);
+    }
+
+    .form-label {
+        font-family: 'Cinzel', serif;
+        color: var(--secondary-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+    }
+
+    .form-text {
+        color: var(--parchment);
+        font-style: italic;
+        font-size: 0.85rem;
+    }
+
+    #gameCreationForm .card {
+        background: 
+            linear-gradient(145deg, rgba(139, 69, 19, 0.4), rgba(74, 85, 104, 0.3)),
+            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="10" y="30" font-family="serif" font-size="20" fill="rgba(212,175,55,0.03)" transform="rotate(-45 50 50)">⚔</text><text x="60" y="80" font-family="serif" font-size="20" fill="rgba(212,175,55,0.03)" transform="rotate(45 50 50)">🛡</text></svg>');
+        border: 3px solid var(--copper);
+        box-shadow: 
+            0 10px 30px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(212, 175, 55, 0.2);
+    }
+
+    #gameCreationForm button {
+        position: relative;
+        overflow: hidden;
+        font-family: 'Cinzel', serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 700;
+    }
+
+    #gameCreationForm button::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent
+        );
+        transform: rotate(45deg);
+        animation: shimmer 3s infinite;
+    }
+
+    .btn-outline-secondary {
+        background: transparent;
+        border: 2px solid var(--iron);
+        color: var(--parchment);
+        font-family: 'Cinzel', serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-outline-secondary:hover {
+        background: linear-gradient(135deg, var(--iron), #2d3748);
+        border-color: var(--copper);
+        color: var(--secondary-color);
+        box-shadow: 0 0 15px rgba(74, 85, 104, 0.5);
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(139, 69, 19, 0.3));
+        border: 2px solid var(--accent-color);
+        color: var(--parchment);
+        font-family: 'Cinzel', serif;
+    }
+
+    .alert-info i {
+        color: var(--accent-color);
+        filter: drop-shadow(0 0 5px var(--accent-color));
+    }
+
+    .card-title {
+        font-family: 'Cinzel', serif;
+        color: var(--secondary-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 2px solid var(--copper);
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .list-unstyled li {
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .list-unstyled li:last-child {
+        border-bottom: none;
+    }
+
+    .fas.fa-check,
+    .fas.fa-arrow-right {
+        filter: drop-shadow(0 0 3px currentColor);
+    }
+
+    .text-success {
+        color: #52c41a !important;
+    }
+
+    .text-info {
+        color: var(--accent-color) !important;
+    }
+
+    .text-warning {
+        color: var(--secondary-color) !important;
+    }
+
+    .text-primary {
+        color: var(--copper) !important;
+    }
+
+    .modal-content {
+        background: linear-gradient(145deg, rgba(26, 15, 10, 0.98), rgba(13, 7, 5, 0.98));
+        border: 3px solid var(--secondary-color);
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(212, 175, 55, 0.3);
+    }
+
+    .modal-body {
+        font-family: 'Cinzel', serif;
+        color: var(--parchment);
+    }
+
+    .modal-body h5 {
+        color: var(--secondary-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .spinner-border {
+        border-color: var(--secondary-color);
+        border-right-color: transparent;
+        filter: drop-shadow(0 0 5px var(--secondary-color));
+    }
+
+    .progress {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--copper);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(90deg, var(--copper), var(--secondary-color), var(--copper));
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+
+    .progress-bar-animated {
+        animation: progress-bar-stripes 1s linear infinite, shimmer 2s infinite;
+    }
+
+    @keyframes progress-bar-stripes {
+        0% {
+            background-position-x: 1rem;
+        }
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .row.mt-4 .card {
+        transition: all 0.3s ease;
+    }
+
+    .row.mt-4 .card:hover {
+        transform: translateY(-3px) rotate(0.5deg);
+    }
+
+    .col-md-4 h6 {
+        font-family: 'Cinzel', serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+
+    .small.text-muted {
+        font-style: italic;
+        color: var(--parchment) !important;
+        opacity: 0.8;
+    }
+</style>
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- En-tête -->
+            <div class="text-center mb-5">
+                <h1 class="display-5">
+                    <i class="fas fa-magic me-3"></i>Créer un nouveau jeu
+                </h1>
+                <p class="lead text-muted">
+                    Laissez l'IA transformer vos idées en concept de jeu complet
+                </p>
+            </div>
+
+            <!-- Formulaire -->
+            <div class="card">
+                <div class="card-body p-5">
+                    <form method="post" id="gameCreationForm">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.genre.id_for_label }}" class="form-label">
+                                    <i class="fas fa-gamepad me-2"></i>Genre du jeu
+                                </label>
+                                {{ form.genre }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.ambiance.id_for_label }}" class="form-label">
+                                    <i class="fas fa-palette me-2"></i>Ambiance
+                                </label>
+                                {{ form.ambiance }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.keywords.id_for_label }}" class="form-label">
+                                <i class="fas fa-tags me-2"></i>Mots-clés thématiques
+                            </label>
+                            {{ form.keywords }}
+                            <div class="form-text">Séparez les mots-clés par des virgules (ex: magie, aventure, mystère)</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.cultural_references.id_for_label }}" class="form-label">
+                                <i class="fas fa-book me-2"></i>Références culturelles (optionnel)
+                            </label>
+                            {{ form.cultural_references }}
+                            <div class="form-text">Jeux, films, livres qui vous inspirent (ex: Zelda, Hollow Knight)</div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            La génération peut prendre quelques minutes. Soyez patient !
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" name="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-magic me-2"></i>🎮 Générer mon jeu !
+                            </button>
+                            <button type="submit" name="random" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-dice me-2"></i>🎲 Génération aléatoire
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Informations sur la génération -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                Comment ça marche ?
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Choisissez le genre et l'ambiance
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Ajoutez des mots-clés inspirants
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    L'IA génère un univers complet
+                                </li>
+                                <li>
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Personnages et lieux inclus
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>
+                                Conseils créatifs
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-arrow-right text-info me-2"></i>
+                                    Mélangez des concepts opposés
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-arrow-right text-info me-2"></i>
+                                    Inspirez-vous de vos œuvres préférées
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-arrow-right text-info me-2"></i>
+                                    Explorez des thèmes profonds
+                                </li>
+                                <li>
+                                    <i class="fas fa-arrow-right text-info me-2"></i>
+                                    Laissez place à l'inattendu
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exemples d'inspiration -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Exemples d'inspiration
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6 class="text-primary">RPG + Cyberpunk</h6>
+                            <p class="small text-muted">
+                                "IA rebelle, mémoires perdues, résistance"
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-success">Metroidvania + Onirique</h6>
+                            <p class="small text-muted">
+                                "rêves lucides, architecture impossible, éveil"
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-info">Puzzle + Post-apo</h6>
+                            <p class="small text-muted">
+                                "bunker mystérieux, codes anciens, survie"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de chargement -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-5">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                <h5>Génération en cours...</h5>
+                <p class="text-muted mb-0">
+                    L'IA crée votre univers de jeu unique.<br>
+                    Cela peut prendre quelques minutes.
+                </p>
+                <div class="progress mt-3" style="height: 6px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('gameCreationForm');
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    
+    form.addEventListener('submit', function(e) {
+        // Vérifier que le token CSRF est présent
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]');
+        if (!csrfToken || !csrfToken.value) {
+            e.preventDefault();
+            alert('Erreur: Token CSRF manquant. Veuillez recharger la page.');
+            return;
+        }
+        
+        // Afficher le modal de chargement après un court délai
+        setTimeout(() => {
+            loadingModal.show();
+            
+            // Désactiver seulement les boutons pour éviter les double-clics
+            const buttons = form.querySelectorAll('button[type="submit"]');
+            buttons.forEach(button => {
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Génération...';
+            });
+        }, 100);
+    });
+    
+    // Suggestions dynamiques de mots-clés
+    const keywordsInput = document.querySelector('textarea[name="keywords"]');
+    if (keywordsInput) {
+        const suggestions = [
+            'voyage temporel', 'amnésie', 'prophétie', 'trahison', 'sacrifice',
+            'résurrection', 'corruption', 'rédemption', 'vengeance', 'découverte',
+            'mystère ancien', 'pouvoir interdit', 'alliance improbable', 'double identité',
+            'monde parallèle', 'technologie perdue', 'magie oubliée', 'destin brisé'
+        ];
+        
+        keywordsInput.addEventListener('focus', function() {
+            if (!this.value) {
+                const randomSuggestions = suggestions.sort(() => 0.5 - Math.random()).slice(0, 3);
+                this.placeholder = `Ex: ${randomSuggestions.join(', ')}...`;
+            }
+        });
+    }
+    
+    // Animation des cartes d'exemple
+    const exampleCards = document.querySelectorAll('.card');
+    exampleCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('animate__animated', 'animate__fadeInUp');
+    });
+});
+</script>
+
+<style>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate__animated {
+    animation-duration: 0.6s;
+    animation-fill-mode: both;
+}
+
+.animate__fadeInUp {
+    animation-name: fadeInUp;
+}
+
+.progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    0% {
+        background-position-x: 1rem;
+    }
+}
+</style>
+{% endblock %}

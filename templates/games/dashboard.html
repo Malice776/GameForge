@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - GameForge{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <!-- En-tête du dashboard -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6">
+                        <i class="fas fa-tachometer-alt me-3"></i>Dashboard
+                    </h1>
+                    <p class="lead text-muted">
+                        Bienvenue {{ user.first_name|default:user.username }} !
+                    </p>
+                </div>
+                <div>
+                    {% if can_create_game %}
+                    <a href="{% url 'create_game' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Nouveau jeu
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-lg" disabled title="Limite quotidienne atteinte">
+                        <i class="fas fa-ban me-2"></i>Limite atteinte
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-gamepad fa-2x text-primary mb-2"></i>
+                    <h3 class="card-title">{{ user_games.count }}</h3>
+                    <p class="card-text text-muted">Jeux créés</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                    <h3 class="card-title">{{ favorites.count }}</h3>
+                    <p class="card-text text-muted">Favoris</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-robot fa-2x text-warning mb-2"></i>
+                    <h3 class="card-title">{{ api_usage }}</h3>
+                    <p class="card-text text-muted">Générations aujourd'hui</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                    <h3 class="card-title">{{ api_limit|add:"-"|add:api_usage }}</h3>
+                    <p class="card-text text-muted">Restantes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre de progression API -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-line me-2"></i>Utilisation API quotidienne
+                    </h5>
+                    <div class="progress mb-2" style="height: 20px;">
+                        {% widthratio api_usage api_limit 100 as progress_percent %}
+                        <div class="progress-bar 
+                            {% if progress_percent < 50 %}bg-success
+                            {% elif progress_percent < 80 %}bg-warning
+                            {% else %}bg-danger{% endif %}" 
+                            role="progressbar" 
+                            style="width: {{ progress_percent }}%">
+                            {{ api_usage }}/{{ api_limit }}
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        La limite se remet à zéro chaque jour à minuit.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mes jeux -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>
+                    <i class="fas fa-gamepad me-2"></i>Mes jeux
+                </h2>
+                {% if user_games %}
+                <small class="text-muted">{{ user_games.count }} jeu{{ user_games.count|pluralize }}</small>
+                {% endif %}
+            </div>
+
+            {% if user_games %}
+            <div class="row g-4">
+                {% for game in user_games %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card game-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title">{{ game.title }}</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'game_detail' game.pk %}">
+                                                <i class="fas fa-eye me-2"></i>Voir
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'edit_game' game.pk %}">
+                                                <i class="fas fa-edit me-2"></i>Modifier
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" href="{% url 'delete_game' game.pk %}">
+                                                <i class="fas fa-trash me-2"></i>Supprimer
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="badge badge-genre me-2">{{ game.get_genre_display }}</span>
+                                <span class="badge badge-ambiance">{{ game.get_ambiance_display }}</span>
+                            </div>
+
+                            <p class="card-text">{{ game.description|truncatewords:15 }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ game.created_at|date:"d/m/Y" }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-eye me-1"></i>{{ game.views_count }}
+                                </small>
+                            </div>
+
+                            {% if not game.is_public %}
+                            <div class="mt-2">
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-lock me-1"></i>Privé
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'game_detail' game.pk %}" class="btn btn-primary w-100">
+                                <i class="fas fa-eye me-2"></i>Voir le détail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-gamepad fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Aucun jeu créé</h4>
+                    <p class="text-muted mb-4">
+                        Commencez votre aventure créative en générant votre premier jeu !
+                    </p>
+                    {% if can_create_game %}
+                    <a href="{% url 'create_game' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Créer mon premier jeu
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Mes favoris -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>
+                    <i class="fas fa-heart me-2"></i>Mes favoris
+                </h2>
+                {% if favorites %}
+                <a href="{% url 'favorites' %}" class="btn btn-outline-primary">
+                    Voir tous ({{ favorites.count }})
+                </a>
+                {% endif %}
+            </div>
+
+            {% if favorites %}
+            <div class="row g-4">
+                {% for favorite in favorites|slice:":3" %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card game-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title">{{ favorite.game.title }}</h5>
+                                <button class="btn btn-sm btn-outline-danger favorite-btn" 
+                                        data-game-id="{{ favorite.game.id }}"
+                                        title="Retirer des favoris">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="badge badge-genre me-2">{{ favorite.game.get_genre_display }}</span>
+                                <span class="badge badge-ambiance">{{ favorite.game.get_ambiance_display }}</span>
+                            </div>
+
+                            <p class="card-text">{{ favorite.game.description|truncatewords:15 }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>{{ favorite.game.creator.username }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-eye me-1"></i>{{ favorite.game.views_count }}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'game_detail' favorite.game.pk %}" class="btn btn-primary w-100">
+                                <i class="fas fa-eye me-2"></i>Découvrir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if favorites.count > 3 %}
+            <div class="text-center mt-4">
+                <a href="{% url 'favorites' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-heart me-2"></i>Voir tous mes favoris
+                </a>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="card">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Aucun favori</h5>
+                    <p class="text-muted mb-3">
+                        Explorez les créations de la communauté et ajoutez vos jeux préférés !
+                    </p>
+                    <a href="{% url 'game_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-search me-2"></i>Découvrir des jeux
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
