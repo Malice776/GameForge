@@ -7,17 +7,47 @@ Une plateforme web complète développée avec Django permettant aux utilisateur
 ## 🌟 Fonctionnalités principales
 
 ### 🎯 Génération de jeux par IA
-- **Univers cohérent** : Génération automatique d'un monde avec son lore et ses règles
-- **Histoire immersive** : Scénario structuré en 3 actes avec retournements narratifs
-- **Personnages riches** : Galerie de personnages avec rôles, capacités et motivations
-- **Lieux emblématiques** : Création d'environnements détaillés avec leur atmosphère
-- **Mécaniques de gameplay** : Suggestions de mécaniques adaptées au genre choisi
-
-### 🎨 Interface utilisateur moderne
-- **Design responsive** : Compatible mobile, tablette et desktop
 - **Interface intuitive** : Navigation fluide avec animations CSS
-- **Thème sombre** : Design moderne avec dégradés et effets visuels
-- **Accessibilité** : Interface optimisée pour tous les utilisateurs
+# 🎮 GameForge - Générateur de jeux vidéo par IA
+
+## Présentation du projet
+GameForge est une plateforme web développée avec Django permettant aux utilisateurs de générer des concepts de jeux vidéo originaux grâce à l'intelligence artificielle. L'application propose la création automatisée d'univers, d'histoires, de personnages et de lieux, ainsi qu'une gestion complète des créations et des favoris.
+
+## Schéma de la transition des données
+...
+
+## Instructions d'installation
+
+### Prérequis
+- Python 3.8 ou supérieur
+- pip
+- Git
+
+## Screenshots de l'application
+![Accueil](media/accueil.png)
+![Dashboard](media/dashboard.png)
+![Détail jeu](media/detail_jeu.png)
+![Liste jeux](media/liste.png)
+![Modification jeu](media/modif_jeu.png)
+![Nouveau jeu](media/nouveau_jeu.png)
+![Profil](media/profile.png)
+
+## Bonus implémentés
+- Système de favoris en AJAX
+- Limitation quotidienne d'usage API par utilisateur
+- Dashboard personnalisé
+- Recherche et filtrage avancés
+- Upload d'avatar utilisateur
+- Design responsive et thème sombre
+- Statistiques d'utilisation
+
+## Limites et fonctionnalités non réalisées
+- Système de commentaires et notation des jeux
+- Export PDF stylisé et API publique
+- Déploiement Docker et cache Redis
+
+---
+
 
 ### 🔐 Système d'authentification complet
 - **Inscription/Connexion** : Système sécurisé avec validation
@@ -44,15 +74,12 @@ Une plateforme web complète développée avec Django permettant aux utilisateur
 - **Google Fonts** : Typographies (Orbitron, Roboto)
 - **JavaScript ES6** : Interactions dynamiques
 
-### IA et APIs
-- **Simulation IA** : Générateur de contenu basé sur des templates
-- **Hugging Face** : Prêt pour l'intégration d'APIs IA réelles
-- **Système modulaire** : Architecture extensible pour futures intégrations
+### 🤖 Modèle d'IA utilisé
 
-### Outils de développement
-- **Django Crispy Forms** : Rendu avancé des formulaires
-- **Pillow** : Traitement d'images
-- **Python Decouple** : Gestion des variables d'environnement
+- **Groq - llama-3.1_8b-instant** pour la génération des concepts de jeux vidéo. 
+
+***Pourquoi?***
+    - Pour sa rapidité d'inférence et sa faible latence grâce à l'infrastructure Groq, sa capacité à générer des textes cohérents et créatifs adaptés au game design. Un coût d'utilisation réduit et une API simple à intégrer.
 
 ## 🚀 Installation et configuration
 
@@ -147,32 +174,6 @@ L'application sera accessible à l'adresse : `http://127.0.0.1:8000`
 - Ajoutez vos jeux préférés en favoris
 - Découvrez de nouveaux genres et ambiances
 
-## 🎮 Genres et ambiances disponibles
-
-### Genres de jeux
-- **RPG** : Jeux de rôle épiques
-- **FPS** : Tir à la première personne
-- **Metroidvania** : Exploration interconnectée
-- **Visual Novel** : Narration interactive
-- **Platformer** : Jeux de plateforme
-- **Strategy** : Stratégie et tactique
-- **Puzzle** : Réflexion et énigmes
-- **Adventure** : Aventure et exploration
-- **Simulation** : Simulation réaliste
-- **Racing** : Course et vitesse
-
-### Ambiances
-- **Post-apocalyptique** : Monde dévasté
-- **Onirique** : Frontières du rêve
-- **Cyberpunk** : Futur technologique sombre
-- **Dark Fantasy** : Fantaisie sombre
-- **Médiéval** : Époque médiévale
-- **Science-Fiction** : Futur lointain
-- **Horreur** : Terreur et suspense
-- **Steampunk** : Rétro-futurisme à vapeur
-- **Moderne** : Époque contemporaine
-- **Fantasy** : Monde magique
-
 ## 🔧 Architecture du projet
 
 ```
@@ -196,74 +197,3 @@ gameforge/
 ├── media/                  # Fichiers uploadés
 └── requirements.txt        # Dépendances Python
 ```
-
-## 🎨 Fonctionnalités avancées
-
-### Système de favoris
-- Ajout/suppression en AJAX
-- Interface réactive
-- Compteurs en temps réel
-
-### Recherche et filtrage
-- Recherche textuelle avancée
-- Filtres par genre et ambiance
-- Tri par popularité, date, titre
-
-### Limitation d'usage API
-- Quota quotidien par utilisateur
-- Système anti-spam
-- Réinitialisation automatique
-
-### Gestion des médias
-- Upload d'avatars utilisateur
-- Images conceptuelles (prévu)
-- Optimisation automatique
-
-## 🔮 Évolutions futures
-
-### Intégration IA réelle
-- [ ] API Hugging Face pour génération de texte
-- [ ] Stable Diffusion pour images conceptuelles
-- [ ] GPT pour dialogues et quêtes
-- [ ] DALL-E pour art conceptuel
-
-### Fonctionnalités communautaires
-- [ ] Système de commentaires
-- [ ] Notation des jeux
-- [ ] Partage sur réseaux sociaux
-- [ ] Collaboration entre créateurs
-
-### Export et partage
-- [ ] Export PDF stylisé
-- [ ] Game Design Document complet
-- [ ] API publique pour développeurs
-- [ ] Intégration avec moteurs de jeu
-
-### Améliorations techniques
-- [ ] Cache Redis pour performances
-- [ ] Base de données PostgreSQL
-- [ ] Déploiement Docker
-- [ ] Tests automatisés
-
-## 🤝 Contribution
-
-Ce projet est développé dans le cadre d'un TP Django. Les contributions sont les bienvenues !
-
-### Comment contribuer
-1. Forkez le projet
-2. Créez une branche pour votre fonctionnalité
-3. Committez vos changements
-4. Poussez vers la branche
-5. Ouvrez une Pull Request
-
-## 📄 Licence
-
-Ce projet est développé à des fins éducatives dans le cadre d'un TP Django.
-
-## 👨‍💻 Auteur
-
-Développé avec ❤️ pour le cours de Django
-
----
-
-**GameForge** - Où l'imagination rencontre l'intelligence artificielle ! 🎮✨
