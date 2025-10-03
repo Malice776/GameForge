@@ -95,6 +95,13 @@ GameForge est une plateforme web développée avec Django permettant aux utilisa
 git clone <url-du-repo>
 cd TPgroupejeuV1
 ```
+2. **Créer le fichier `.env` à la racine du projet**
+Ajoutez les clés suivantes dans le fichier `.env` :
+```env
+AI_API_KEY=<votre_clé_api_groq>
+SECRET_KEY=<votre_clé_secrète_django>
+HUGGINGFACE_API_KEY=<votre_clé_huggingface>
+```
 
 2. **Créer un environnement virtuel**
 ```bash
@@ -117,17 +124,18 @@ pip install -r requirements.txt
 
 5. **Appliquer les migrations**
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
 6. **Créer un superutilisateur**
 ```bash
-python create_superuser.py
+python manage.py createsuperuser
 ```
 
 7. **Créer des données de démonstration**
 ```bash
-python create_demo_data.py
+python setup.py demo
 ```
 
 8. **Lancer le serveur de développement**
