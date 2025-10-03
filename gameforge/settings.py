@@ -25,13 +25,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
+AI_API_KEY = os.getenv('AI_API_KEY')
+HUGGINGFACE_API_KEY = os.getenv('HUGGINGFACE_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-AI_API_KEY = os.getenv('AI_API_KEY')
 
 # Application definition
 

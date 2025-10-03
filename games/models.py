@@ -59,6 +59,10 @@ class Game(models.Model):
     # Statistiques
     views_count = models.PositiveIntegerField(default=0)
     
+    # Prompts pour la génération d'images
+    concept_art_character_prompt = models.TextField(blank=True, null=True)
+    concept_art_environment_prompt = models.TextField(blank=True, null=True)
+    
     class Meta:
         ordering = ['-created_at']
         verbose_name = "Jeu"

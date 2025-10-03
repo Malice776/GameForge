@@ -159,6 +159,8 @@ def create_demo_data():
         game = Game.objects.create(**generated_content)
         generator.create_characters_for_game(game)
         generator.create_locations_for_game(game)
+        generator.create_concept_art_for_game(game)
+
         
         print(f"✅ Jeu créé : {game.title}")
     

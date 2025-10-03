@@ -10,7 +10,6 @@ from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.middleware.csrf import get_token
-import random
 
 from .models import Game, Character, Location, Favorite, UserProfile
 from .forms import CustomUserCreationForm, GameCreationForm, GameUpdateForm, UserProfileForm, GameSearchForm
@@ -161,6 +160,10 @@ def create_game_view(request):
                     creator=request.user,
                     **game_data
                 )
+                
+                generator.create_characters_for_game(game)
+                generator.create_locations_for_game(game)
+                generator.create_concept_art_for_game(game)
 
                 # Incrémenter l'utilisation de l'API
                 request.user.profile.increment_api_usage()
